@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    postres:
+        image: postgres:12
+        restart: always
+        environment:
+            POSTGRES_DB: billing
+            POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+            - "5432:5432"
