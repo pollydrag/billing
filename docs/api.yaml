@@ -1,0 +1,121 @@
+swagger: "2.0"
+
+info:
+    title: "Billing API"
+    version: "1.0"
+
+paths:
+    /v1/clients:
+        post:
+            summary: Создание клиента с кошельком
+            parameters:
+              - name: "body"
+                in: body
+                required: true
+                schema:
+                    $ref: "#/definitions/CreateClientRequest"
+            responses:
+                200:
+                    description: ОК
+                    schema:
+                        $ref: "#/definitions/CreateClientResponse"
+                400:
+                    $ref: "#/definitions/BadRequest"
+
+    /v1/wallets/refill:
+        post:
+            summary: Пополнение кошелька клиента
+            parameters:
+                -   name: "body"
+                    in: body
+                    required: true
+                    schema:
+                        $ref: "#/definitions/RefillRequest"
+            responses:
+                200:
+                    description: ОК
+                    type: object
+                    additionalProperties: false
+                400:
+                    $ref: "#/definitions/BadRequest"
+
+    /v1/wallets/transfer:
+        post:
+            summary: Перевод денег между кошельками клиентов
+            parameters:
+              - name: "body"
+                in: body
+                required: true
+                schema:
+                    $ref: "#/definitions/TransferRequest"
+            responses:
+                200:
+                    description: ОК
+                    type: object
+                    additionalProperties: false
+                400:
+                    $ref: "#/definitions/BadRequest"
+
+definitions:
+    CreateClientRequest:
+        type: object
+        additionalProperties: false
+        required:
+          - login
+        properties:
+            login:
+                description: Логин клиента
+                type: string
+
+    CreateClientResponse:
+        type: object
+        additionalProperties: false
+        required:
+          - id
+          - login
+        properties:
+            id:
+                description: Идентификатор клиента
+                type: integer
+            login:
+                decription: Логин клиента
+                type: string
+
+    RefillRequest:
+        type: object
+        additionalProperties: false
+        required:
+          - client_id
+          - amount
+        properties:
+            client_id:
+                description: Идентификатор клиента
+                type: integer
+            amount:
+                description: Сумма пополнения
+                type: number
+
+    TransferRequest:
+        type: object
+        additionalProperties: false
+        required:
+            - src_client_id
+            - dst_client_id
+            - amount
+        properties:
+            src_client_id:
+                description: Идентификатор клиента списания
+                type: integer
+            dst_client_id:
+                description: Идентификатор клиента пополнения
+                type: integer
+            amount:
+                description: Сумма
+                type: number
+
+    BadRequest:
+        description: Bad request
+        type: object
+        properties:
+            error:
+                type: string

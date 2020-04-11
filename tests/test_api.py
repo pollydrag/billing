@@ -7,7 +7,7 @@ def billing_app(db):
     return app.create_app()
 
 
-async def test_clients(aiohttp_client, billing_app):
+async def test_create_client(aiohttp_client, billing_app):
     from billing.api import models
 
     client = await aiohttp_client(billing_app)
@@ -46,6 +46,15 @@ async def test_clients(aiohttp_client, billing_app):
     }
 
 
+async def test_create_client_fail(aiohttp_client, billing_app):
+    client = await aiohttp_client(billing_app)
+    response = await client.post(
+        '/v1/clients',
+        json={'bad_request': ''}
+    )
+    assert response.status == 400, await response.text()
+
+
 async def test_refill(aiohttp_client, billing_app):
     from billing.api import models
 
@@ -79,6 +88,15 @@ async def test_refill(aiohttp_client, billing_app):
         'currency': 'USD',
         'amount': 10,
     }
+
+
+async def test_refill_fail(aiohttp_client, billing_app):
+    client = await aiohttp_client(billing_app)
+    response = await client.post(
+        '/v1/wallets/refill',
+        json={'bad_request': ''}
+    )
+    assert response.status == 400, await response.text()
 
 
 async def test_transfer(aiohttp_client, billing_app):
@@ -130,3 +148,12 @@ async def test_transfer(aiohttp_client, billing_app):
             'amount': 10,
         }
     ]
+
+
+async def test_transfer_fail(aiohttp_client, billing_app):
+    client = await aiohttp_client(billing_app)
+    response = await client.post(
+        '/v1/wallets/transfer',
+        json={'bad_request': ''}
+    )
+    assert response.status == 400, await response.text()
